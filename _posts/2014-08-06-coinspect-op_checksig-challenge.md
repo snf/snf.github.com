@@ -8,21 +8,25 @@ tags: [bitcoin, OP_CHECKSIG]
 
 ### Introduction
 
-The challenge consisted in taking the bitcoins from a multisig wallet
-or p2sh (pay to script hash):
+The challenge from
+[Coinspect](http://blog.coinspect.co/copay-wallet-emptying-vulnerability)
+and [Ekoparty conference](http://www.ekoparty.org/) consisted in
+taking the bitcoins from a multisig or p2sh (pay to script hash)
+wallet:
 [https://blockchain.info/address/32GkPB9XjMAELR4Q2Hr31Jdz2tntY18zCe](https://blockchain.info/address/32GkPB9XjMAELR4Q2Hr31Jdz2tntY18zCe)
 
-I'm making this post as short as possible, for understanding it, you
-may need previous knowledge about bitcoin internals.
+I'm making this post as short as possible, and for understanding it,
+you may need previous knowledge about bitcoin internals.
 
-### Understanding OP_CHECKSIG
+### Understanding OP_CHECKSIG opcode
 
-This is a fuzzy and complicated part of bitcoin. It's explained
+This is a fuzzy and complicated part of validating bitcoin
+transactions. It's explained
 [here](https://bitcointalk.org/index.php?topic=260595.0).
 
 When OP_CHECKSIG is reached in a script it needs that the public key
 and the signature are in the stack. It takes the hash type from the
-signature's last byte and depending on it, takes a different approach
+signature's last byte and depending on it, takes an specific approach
 to verifying the signature.
 
 The internals of this opcode is, having the transaction serialized,
@@ -30,12 +34,12 @@ strip parts of it depending on the hash type, hashing it and then
 comparing that the signature is valid for that hash and for the public
 key provided in the stack.
 
-In the case of this challenge a P2SH address is provided. It means
-that it scriptSig consists of many signatures and a redeem script.
+In this challenge a P2SH address is provided. It means that the
+scriptSig consists of many signatures and a redeem script.
 
 This redeem script contains the public keys that can be used and how
 many of them are neccesary for validating the script. In this example
-needs 2 of the 3.
+needs 2 of 3:
 
 ```
 {2 [pubkey1] [pubkey2] [pubkey3] 3 OP_CHECKMULTISIG}
@@ -54,11 +58,11 @@ This mode is supposed to strip the other outputs that doesn't
 correspond to the same index of the input before hashing the
 transaction and checking that the signature is valid.
 
-The problem is that this mode is supposed to sign only one output, the
-output that is in the same index as this input. In case there are less
-outputs than inputs, then it should probably fail. But because a bug
-in the initial implementation of bitcoind, it was validating it and
-signing a hardcoded hash.
+The problem is that SIGHASH\_SINGLE is supposed to sign only one
+output, the output that is in the same index as this input. In case
+there are less outputs than inputs, then it should probably fail. But
+because a bug in the initial implementation of bitcoind, it was
+validating it and signing a hardcoded hash.
 
 From the bitcoin wiki, it describes that if there is no output in the
 same index of the input, then the hash of the transaction assumed to
@@ -74,7 +78,7 @@ It means that this signature can be reused in case we need to sign
 
 ### The challenge
 
-Going back to the coinspect's wallet
+Going back to the Coinspect's wallet
 32GkPB9XjMAELR4Q2Hr31Jdz2tntY18zCe, we detect that there is already an
 outgoing transaction:
 [6102bfd4bad33443bcb99765c0751b6b8e4e65f4db4e3b65324c5e9e3dac8132](https://blockchain.info/tx/6102bfd4bad33443bcb99765c0751b6b8e4e65f4db4e3b65324c5e9e3dac8132).
@@ -100,8 +104,8 @@ again.
 With that signature we can sign any input which index is bigger than
 the amount of outputs. In case we are using one output, that leaves us
 with the input at index 0 to be external to that address because we
-can not reuse the signatures for it. We are adding an input from an
-address we control with the smallest mount possible.
+can not reuse the signatures for it. And we are adding an input from an
+address we control with the smallest amount possible.
 
 ### Example
 
