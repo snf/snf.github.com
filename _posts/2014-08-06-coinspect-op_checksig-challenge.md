@@ -83,7 +83,7 @@ Going back to the Coinspect's wallet
 outgoing transaction:
 [6102bfd4bad33443bcb99765c0751b6b8e4e65f4db4e3b65324c5e9e3dac8132](https://blockchain.info/tx/6102bfd4bad33443bcb99765c0751b6b8e4e65f4db4e3b65324c5e9e3dac8132).
 
-The sigScript:
+The sigScript from the third input of the transaction:
 
 ```
 0
@@ -107,9 +107,9 @@ with the input at index 0 to be external to that address because we
 can not reuse the signatures for it. And we are adding an input from an
 address we control with the smallest amount possible.
 
-### Example
+### Taking the bitcoins
 
-I'm using sx for the example.
+I'm using sx for the solution.
 
 Create a new transaction with the first input from an address I
 control and the other 2 with inputs from the coinspect's wallet:
@@ -122,7 +122,7 @@ Added input 9bf39fbf0f89c869585fb59acb2bfec5e2f57069b81021b967a7269a2c873f63:0
 Added output sending 3100000 Satoshis to 197iAesReT4Z6chRqnsficr3LQpVxBdv1J.
 ```
 
-Now create the script for the first input signing it and adding my
+Create the script for the first input signing it and adding my
 public key:
 
 ```
@@ -135,7 +135,8 @@ $ sx set-input txfile.tx 0 $SCRIPT > signedtx
 
 Now I will add the reused signature for the other two inputs, those
 inputs don't have a corresponding output, so they only need to sign
-000..01, which we already have the signature for:
+000..01, which we already have the signature for (remember the third
+input from the previous transaction?):
 
 ```
 $ SIGN_1=3045022100dfcfafcea73d83e1c54d444a19fb30d17317f922c19e2ff92dcda65ad09cba24022001e7a805c5672c49b222c5f2f1e67bb01f87215fb69df184e7c16f66c1f87c2903 
@@ -180,3 +181,5 @@ Output:
   script: dup hash160 [ 5905ddb52ed55abc9f8f4a58a8323296c642e932 ] equalverify checksig
   address: 197iAesReT4Z6chRqnsficr3LQpVxBdv1J
 ```
+
+You can check the transaction and it's details [here](http://webbtc.com/tx/0db11d06a139756d7f9d4a9257a3fbbb64256d0d7b88d08507872edb228996d3)
