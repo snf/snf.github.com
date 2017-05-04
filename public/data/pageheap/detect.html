@@ -8,7 +8,7 @@ function set_text(msg) {
     document.getElementById("result").innerText = msg;
 }
 
-var ALLOC_TIME = 20; //ms
+var ALLOC_TIME = 10; //ms
 
 function NoAllocStore(count) {
     this.count = count;
@@ -28,7 +28,7 @@ NoAllocStore.prototype.store = function(obj) {
     this.index++;
 }
 
-var nstore = new NoAllocStore(100000);
+var nstore = new NoAllocStore(200000);
 
 function doFor(fun, time) {
     var i = 0;
