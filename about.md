@@ -4,7 +4,7 @@ title: About
 ---
 
 <p class="message">
-  Hey there! This is Sebastian Fernandez's blog. I write about challenges and security, not a great writer, so not great stories but plenty of technical details.
+  Hey there! This is Sebastian Fernandez's blog. I write about challenges and security, not a great writer, so not great stories but plenty of technical details. Currently working at Microsoft. Opinions are my own and not the views of my employer.
 </p>
 
 
