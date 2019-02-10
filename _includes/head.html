@@ -13,6 +13,10 @@
     {% endif %}
   </title>
 
+{% if page.image %}
+  <meta property="og:image" content={{ page.image }}>
+{% endif %}
+
   <!-- CSS -->
   <!--
   <link rel="stylesheet" href="{{ site.baseurl }}public/css/poole.css">
