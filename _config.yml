@@ -13,7 +13,7 @@ title:            Snf's blog
 tagline:
 url:
 paginate:         1
-baseurl:          /
+baseurl:          ""
 # baseurl:        ""
 author:
   name:           S.N. Fernandez
@@ -28,8 +28,7 @@ sass:
   style:            :compressed
 
 # Custom vars
-version:             2.0.0
-github:
+version:             3.0.0
 
 # pages_list:
 #   About: '/about'
