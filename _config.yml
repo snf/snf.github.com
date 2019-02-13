@@ -3,7 +3,10 @@ markdown:         kramdown
 highlighter:      rouge
 
 # Permalinks
-permalink:        pretty
+#
+# Use of `relative_permalinks` ensures post links from the index work properly.
+permalink:           pretty
+#relative_permalinks: true
 
 # Setup
 title:            Snf's blog
@@ -11,17 +14,29 @@ tagline:
 url:
 paginate:         1
 baseurl:          /
+# baseurl:        ""
 author:
   name:           S.N. Fernandez
   url:
   email:
 
-# Custom vars
-version:          1.0.0
-github:
-  repo:           https://github.com/poole/poole
+# Assets
+#
+# We specify the directory for Jekyll so we can use @imports.
+sass:
+  sass_dir:          _sass
+  style:            :compressed
 
-pages_list:
-  About: '/about'
-  Archive: '/archive'
-  Feed: '/atom.xml'
+# Custom vars
+version:             2.0.0
+github:
+
+# pages_list:
+#   About: '/about'
+#   Archive: '/archive'
+#   Feed: '/atom.xml'
+
+# Gems
+plugins:
+  - jekyll-paginate
+#  - jekyll-gist
