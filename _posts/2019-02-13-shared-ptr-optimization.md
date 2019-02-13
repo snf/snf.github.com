@@ -23,7 +23,7 @@ g++ -shared -pthread  -fPIC main.cpp -o libcreatethread.so
 
 This is a write-up of the *"behavioral analysis"* of `shared_ptr<T>` reference count in GNU's libstdc++. This smart pointer is used to share references to the same underlaying pointer.
 
-The mechanism beneath works by tracking the amount of references through a reference count so the pointer gets freed only after the last reference is destructed. It is usually used in multi-threaded programs because of the guarantees of having its reference count tracked atomically.
+The mechanism beneath works by tracking the amount of references through a reference count so the pointer gets freed only after the last reference is destructed. It is usually used in multi-threaded programs (in conjunction with other types) because of the guarantees of having its reference count tracked atomically.
 
 <!-- It turns out that when `pthread_create` is not imported, the reference count operations are not atomic. -->
 
@@ -37,7 +37,7 @@ I proceeded to re-check that my code was correct. At first I thought that my re-
 
 ### Profiling
 
-The second day, frustrated with it, I started profiling with [callgrind](http://valgrind.org/docs/manual/cl-manual.html) and [cachegrind](http://valgrind.org/docs/manual/cg-manual.html). Here is where I got the *aha* moment. Every part of the code that was assigning `shared_ptr<T>` was being much faster than my equivalent [`Arc::clone`](https://doc.rust-lang.org/std/sync/struct.Arc.html#method.clone) calls in Rust.
+The second day, I started profiling with [callgrind](http://valgrind.org/docs/manual/cl-manual.html) and [cachegrind](http://valgrind.org/docs/manual/cg-manual.html). Here is where I got the *aha* moment. Every part of the code that was *copying* `shared_ptr<T>` was being much faster than my equivalent [`Arc::clone`](https://doc.rust-lang.org/std/sync/struct.Arc.html#method.clone) calls in Rust.
 
 Inside KCachegrind, I saw something unexpected, the code was straightforward but before increasing `shared_ptr`'s reference count during a pointer copy, there was a branch to decide if it should do an atomic addition or a non-atomic one. The code-path being taken was the non atomic one!
 
@@ -177,7 +177,7 @@ As expected, `atomic_add` and `atomic_add_single` were both straightforward:
   }
 ```
 
-Now the new set of questions were about `__gthread_active_p()`. After a quick `grep`, I found that many functions were depending on its return value to go with an atomic operation or with non-atomic ones. Finding all of them is an exercise for the reader.
+Now the new set of questions were about `__gthread_active_p()`. After a quick `grep`, I found that many functions were depending on its return value to go with a thread-safe operation or not. Finding all of them is an exercise for the reader.
 
 To find the right implementation of `__gthread_active_p`, I preprocessed the file with `g++ -E main.cpp` and landed on `/usr/include/x86_64-linux-gnu/c++/6/bits/gthr-default.h:246`:
 
@@ -294,17 +294,13 @@ Although uninteresting to the topic of the blog post, after the modifications, b
 
 Not so fast! Arc actually means Atomic Reference Counted so it would be a plain lie if it hadn't use atomic operations on the reference count.
 
-Furthermore, Rust's std offers both [Rc](https://doc.rust-lang.org/std/rc/struct.Rc.html) and [Arc](https://doc.rust-lang.org/std/sync/struct.Arc.html) which share similar APIs so they can be used interchangeably whenever necessary and the type system would get your back if you had shared Rc between tasks due to it not being `!Sync` (cannot be shared across tasks).
-
-### Future work
-
-While I'm probably not going to spend any more time on this, I've found a personally unknown thing about C++ standard library (GNU) and wanted to document it because it was interesting to track down.
-
-Ideas are welcome!
+Furthermore, Rust's std offers both [Rc](https://doc.rust-lang.org/std/rc/struct.Rc.html) and [Arc](https://doc.rust-lang.org/std/sync/struct.Arc.html) which share similar APIs so they can be used interchangeably whenever necessary and the type system would get your back if you had sent Rc between tasks due to it being `!Send` (not send).
 
 ### Conclusion
 
 This was another failed case of micro-benchmarking. Optimizations go beyond your simple `-O3`. In this case, I didn't know that the libstdc++ was changing its behaviour depending on if `pthread_create` was imported by the program or not.
+
+While I'm probably not going to spend any more time on this, I've found a personally unknown thing about C++ standard library (GNU) and wanted to document it because it was interesting to track down.
 
 Unfortunately, I cannot conclude if `shared_ptr<T>` behaviour is completely safe in uncommon environments.
 
