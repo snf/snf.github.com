@@ -7,8 +7,6 @@ tags: [C++, shared_ptr, shared_ptr atomic, shared_ptr reference count, shared_pt
 image: /public/data/sharedptr/kcachegrind.png
 ---
 
-<!-- https://stackoverflow.com/questions/39214375/how-can-you-get-thumbnails-for-jekyll-posts-when-the-post-has-no-images -->
-
 <!--
 ```
 rustc -O -L. main.rs
@@ -258,13 +256,6 @@ The programs that would introduce the external parallelism would also load `pthr
 I assume that this is also a very rare case and from a quick googling, I can see tons of problems caused by using `dlopen` in statically compiled binaries.
 
 In conclusion, I'll assume this is not a typical scenario and it is **mostly** safe.
-
-<!-- 
-While it seems logical that the optimization works, this very elegant hack could introduce reliability and security issues if parallel computing is used somehow without bringing `pthread_create` into the mix.
-
-Specially with natively-compile code, it could be called from other languages that might introduce external parallelism and expecting the program to be thread-safe because it uses `shared_ptr`.
-
-I can also be using another library that uses the syscall interface instead of pthread invalidating the weak reference for `pthread_key_create`. -->
 
 
 ### Why not go further with the optimization efforts?
