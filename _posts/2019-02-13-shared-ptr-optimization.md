@@ -1,10 +1,10 @@
 ---
 layout: post
 title: "shared_ptr<T>: the (not always) atomic reference counted smart pointer"
-description: ""
-category:
-tags: [C++, shared_ptr, shared_ptr atomic, shared_ptr reference count, shared_ptr optimization, shared_ptr atomic reference count]
 image: "/public/data/sharedptr/kcachegrind.png"
+description: ""
+category: ""
+tags: [C++, shared_ptr, shared_ptr atomic, shared_ptr reference count, shared_ptr optimization, shared_ptr atomic reference count]
 ---
 
 <!--
