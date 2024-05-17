@@ -196,7 +196,7 @@ __gthread_active_p (void)
 ### `weakref` and `pthread_key_create`
 
 [`__weakref__`](https://gcc.gnu.org/onlinedocs/gcc-4.7.2/gcc/Function-Attributes.html) is an attribute to declare a **weak symbol**. It means that if it is referenced in another place, it becomes available, but while it isn't, it's a NULL pointer.
-It can be used for defining external symbols which may or may not be available. Can also be used for defining functions that could be intercepted by other more specialized ones. There is a blog post with more information about it [here](https://leondong1993.github.io/2017/04/15/strong-weak-symbol/).
+It can be used for defining external symbols which may or may not be available. Can also be used for defining functions that could be intercepted by other more specialized ones. There is a blog post with more information about it [here](https://leondong1993.github.io/2017/08/strong_weak_symbol/).
 
 [`__pthread_key_create`](http://pubs.opengroup.org/onlinepubs/007904975/functions/pthread_key_create.html) is a function used to assign values into the local thread storage.
 
